@@ -41,40 +41,12 @@ import {
 } from "@/components/ui/table";
 import {app} from "@/lib/axios";
 import Image from "next/image";
-import { FormModal } from "./FormModal";
-
-// const data: User[] = [
-//   {
-//     id: "m5gr84i9",
-//     amount: 316,
-//     status: "success",
-//     email: "ken99@yahoo.com",
-//   },
-//   {
-//     id: "3u1reuv4",
-//     amount: 242,
-//     status: "success",
-//     email: "Abe45@gmail.com",
-//   },
-//   {
-//     id: "derv1ws0",
-//     amount: 837,
-//     status: "processing",
-//     email: "Monserrat44@gmail.com",
-//   },
-//   {
-//     id: "5kma53ae",
-//     amount: 874,
-//     status: "success",
-//     email: "Silas22@gmail.com",
-//   },
-//   {
-//     id: "bhqecj4p",
-//     amount: 721,
-//     status: "failed",
-//     email: "carmella@hotmail.com",
-//   },
-// ];
+import {FormModal} from "./FormModal";
+import {useToast} from "./ui/use-toast";
+import Link from "next/link";
+import {useDispatch} from "react-redux";
+import {asDeleteData} from "@/reduxconfig/actions/userActions";
+import UpadateModal from "./UpadateModal";
 
 export type User = {
   _id: string;
@@ -88,135 +60,141 @@ export type User = {
   name: string;
 };
 
-export const columns: ColumnDef<User>[] = [
-  //   {
-  //     id: "select",
-  //     header: ({ table }) => (
-  //     //   <Checkbox
-  //     //     checked={
-  //     //       table.getIsAllPageRowsSelected() ||
-  //     //       (table.getIsSomePageRowsSelected() && "indeterminate")
-  //     //     }
-  //     //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //     //     aria-label="Select all"
-  //     //   />
-  //     ),
-  //     cell: ({ row }) => (
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     ),
-  //     enableSorting: false,
-  //     enableHiding: false,
-  //   },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({row}) => {
-      // console.log(row.original.image);
-      return (
-        <div className="flex items-center justify-start gap-2">
-            <div className="w-10 h-10">
-
-            <Image src={row.original.image.url} height={40} width={40} alt="Profile photo" className="object-cover h-full w-full rounded-full" />
-            </div>
-          <div className="capitalize">{row.getValue("name")}</div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "email",
-    header: ({column}) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({row}) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "contact",
-    header: ({column}) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Contact
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({row}) => <div className="lowercase">{row.getValue("contact")}</div>,
-  },
-  {
-    accessorKey: "dob",
-    header: ({column}) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          DOB
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({row}) => <div className="lowercase">{row.getValue("dob")}</div>,
-  },
-  //   {
-  //     accessorKey: "amount",
-  //     header: () => <div className="text-right">Amount</div>,
-  //     cell: ({row}) => {
-  //       const amount = parseFloat(row.getValue("amount"));
-
-  //       // Format the amount as a dollar amount
-  //       const formatted = new Intl.NumberFormat("en-US", {
-  //         style: "currency",
-  //         currency: "USD",
-  //       }).format(amount);
-
-  //       return <div className="text-right font-medium">{formatted}</div>;
-  //     },
-  //   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({row}) => {
-      const User = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(User._id)}>
-              Copy User ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View User details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
 export function DataTableDemo() {
+  const columns: ColumnDef<User>[] = [
+    {
+      id: "select",
+      header: ({table}) => <div>No</div>,
+      cell: ({row}) => <div>{row.index + 1}</div>,
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({row}) => {
+        // console.log(row.original.image);
+        return (
+          <div className="flex items-center justify-start gap-2">
+            <div className="w-10 h-10">
+              <Image
+                src={row.original.image.url}
+                height={40}
+                width={40}
+                alt="Profile photo"
+                className="object-cover h-full w-full rounded-full"
+              />
+            </div>
+            <div className="capitalize">{row.getValue("name")}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "email",
+      header: ({column}) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            Email
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({row}) => <div className="lowercase">{row.getValue("email")}</div>,
+    },
+    {
+      accessorKey: "contact",
+      header: ({column}) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            Contact
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({row}) => (
+        <div className="lowercase">{row.getValue("contact")}</div>
+      ),
+    },
+    {
+      accessorKey: "dob",
+      header: ({column}) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            DOB
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({row}) => <div className="lowercase">{row.getValue("dob")}</div>,
+    },
+    //   {
+    //     accessorKey: "amount",
+    //     header: () => <div className="text-right">Amount</div>,
+    //     cell: ({row}) => {
+    //       const amount = parseFloat(row.getValue("amount"));
+
+    //       // Format the amount as a dollar amount
+    //       const formatted = new Intl.NumberFormat("en-US", {
+    //         style: "currency",
+    //         currency: "USD",
+    //       }).format(amount);
+
+    //       return <div className="text-right font-medium">{formatted}</div>;
+    //     },
+    //   },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({row}) => {
+        const User = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(User._id)}>
+                Copy User ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href={`/home/${User._id}`}>View User</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <UpadateModal setIsLoading={setIsLoading} user={User} />
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => deleteUser(User._id)}>
+                Delete User
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const [data, setApiData] = React.useState<User[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch = useDispatch();
+  const {toast} = useToast();
   const getData = async () => {
     try {
       const {data} = await app.get("/readAll");
@@ -258,6 +236,15 @@ export function DataTableDemo() {
     },
   });
 
+  const deleteUser = async (id: string) => {
+    try {
+      const res = await dispatch(asDeleteData(id, toast));
+      res && setIsLoading(!isLoading);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -269,7 +256,7 @@ export function DataTableDemo() {
           }
           className="max-w-sm"
         />
-        <FormModal setIsLoading={setIsLoading}/>
+        <FormModal setIsLoading={setIsLoading} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

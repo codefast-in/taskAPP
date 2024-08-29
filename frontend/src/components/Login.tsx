@@ -1,5 +1,5 @@
 "use client";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import * as Yup from "yup";
 import {Card} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
@@ -9,7 +9,9 @@ import Link from "next/link";
 import {useDispatch, useSelector} from "react-redux";
 import {asLoginUser} from "@/reduxconfig/actions/userActions";
 import {Formik} from "formik";
-import {Value} from "@radix-ui/react-select";
+import {app} from "@/lib/axios";
+import {useRouter} from "next/navigation";
+
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Fill the password"),
@@ -17,12 +19,32 @@ const validationSchema = Yup.object().shape({
 
 function Login() {
   const {isLogin} = useSelector((state: any) => state.user);
-
+console.log(isLogin)
   const dispatch = useDispatch();
-  // console.log(loginData)
+
   const sendData = async (value: {email: string; password: string}) => {
+    // console.log(value)
     dispatch(asLoginUser(value));
   };
+
+  // const createAdmin = async () => {
+  //   const dat = {
+  //     name: "Sachin Pawar",
+  //     email: "howto162720@gmail.com",
+  //     password: "1234567890",
+  //     contact: 9516905325,
+  //   };
+  //   try {
+  //     const {data} = await app.post("/admin/create-admin", dat);
+  //     console.log(data)
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const router = useRouter();
+  useEffect(() => {
+    isLogin && router.push("/home");
+  }, [isLogin]);
 
   return (
     <Card className="p-5 mx-auto max-w-[450px]  space-y-6">
@@ -73,7 +95,10 @@ function Login() {
                   <span>{errors.password}</span>
                 )}
               </div>
-              <Button type="submit" className="w-full" onClick={()=>handleSubmit()}>
+              <Button
+                type="submit"
+                className="w-full"
+                onClick={() => handleSubmit()}>
                 Sign In
               </Button>
               <Button variant="outline" className="w-full">
@@ -88,6 +113,8 @@ function Login() {
           </div>
         )}
       </Formik>
+
+      {/* <Button onClick={createAdmin}>admin Create</Button> */}
     </Card>
   );
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import {Button} from "@/components/ui/button";
 import {
   Dialog,
@@ -20,69 +21,51 @@ import Image from "next/image";
 import {RadioGroup, RadioGroupItem} from "./ui/radio-group";
 import {Cross, X} from "lucide-react";
 import {useDispatch} from "react-redux";
-import {asAddNewData} from "@/reduxconfig/actions/userActions";
+import {asAddNewData, asEditData} from "@/reduxconfig/actions/userActions";
 import {useToast} from "./ui/use-toast";
+import {UserDetails, validationSchema} from "./FormModal";
+import {DropdownMenuItem} from "./ui/dropdown-menu";
 
- export const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  contact: Yup.string()
-    .matches(/^[0-9]{10}$/, "Contact must be exactly 10 digits")
-    .required("Contact is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  dob: Yup.string().required("Date of Birth is required"),
-  image: Yup.mixed().required("Profile photo is required"),
-  gender: Yup.string().min(1).required("Select Your Gender"),
-});
-
-export interface UserDetails {
-  name: string;
-  contact: string;
-  email: string;
-  dob: string;
-  gender: "Male" | "Female";
-  image: FileList | null;
-}
-
-export function FormModal({setIsLoading}: any) {
+const UpadateModal = ({setIsLoading, user}: any) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const {toast} = useToast();
   const initialValues: UserDetails = {
-    name: "",
-    contact: "",
-    email: "",
-    dob: "",
-    gender: "Male",
-    image: null,
+    name: user.name,
+    contact: user.contact,
+    email: user.email,
+    dob: user.dob,
+    gender: user.gender,
+    image: user.image,
   };
-  // console.log(initialValues.image);
+
   const sendData = async (values: any) => {
     setIsLoading(true);
     try {
-      await dispatch(asAddNewData(values, toast));
+      const res = await dispatch(asEditData(user._id, values, toast));
       setIsLoading(false);
-      setOpen(false)
+      res && setOpen(false);
       // console.log("Success", response.data);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
   };
-  // console.log(initialValues.image);
+  //   console.log(Array.isArray(initialValues.image));
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="default" className="ml-5">
-          Add New Data
+        <Button size={"sm"} variant="ghost" className="w-full">
+          Update Details
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-screen-lg p-0 overflow-y-scroll max-h-[90dvh]">
         <Card className="p-6">
           <DialogHeader>
-            <DialogTitle>Add New Data</DialogTitle>
-            <DialogDescription>
+            <DialogTitle>Edit Users Details</DialogTitle>
+            {/* <DialogDescription>
               Fill data of new user here. Click save when you're done.
-            </DialogDescription>
+            </DialogDescription> */}
           </DialogHeader>
           <Formik
             initialValues={initialValues}
@@ -92,7 +75,7 @@ export function FormModal({setIsLoading}: any) {
               handleChange,
               handleSubmit,
               values,
-              
+
               errors,
               touched,
               setValues,
@@ -103,6 +86,7 @@ export function FormModal({setIsLoading}: any) {
                     <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
+                      value={values.name}
                       placeholder="Enter your name"
                       onChange={handleChange("name")}
                     />
@@ -115,6 +99,7 @@ export function FormModal({setIsLoading}: any) {
                     <Input
                       id="email"
                       type="email"
+                      value={values.email}
                       placeholder="Enter your email"
                       onChange={handleChange("email")}
                     />
@@ -127,6 +112,7 @@ export function FormModal({setIsLoading}: any) {
                     <Input
                       id="dob"
                       type="date"
+                      value={values.dob}
                       onChange={handleChange("dob")}
                     />
                     {touched.dob && errors.dob && (
@@ -138,6 +124,7 @@ export function FormModal({setIsLoading}: any) {
                     <Input
                       id="contact"
                       type="tel"
+                      value={values.contact}
                       placeholder="Enter your contact number"
                       onChange={handleChange("contact")}
                     />
@@ -149,7 +136,7 @@ export function FormModal({setIsLoading}: any) {
                     <Label htmlFor="contact">Gender</Label>
                     <RadioGroup
                       onValueChange={handleChange("gender")}
-                      // defaultValue="Male"
+                      defaultValue={values.gender}
                       className="flex justify-start items-center">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Male" id="r1" />
@@ -180,7 +167,7 @@ export function FormModal({setIsLoading}: any) {
                     )}
                   </div>
                 </div>
-                {values.image ? (
+                {values.image && values?.image[0] && (
                   <div className="mt-2 h-fit w-fit relative">
                     <Button
                       size={"icon"}
@@ -197,8 +184,24 @@ export function FormModal({setIsLoading}: any) {
                       className="max-h-44 w-auto"
                     />
                   </div>
-                ) : (
-                  ""
+                )}
+                { values?.image?.url && (
+                  <div className="mt-2 h-fit w-fit relative">
+                    {/* <Button
+                      size={"icon"}
+                      variant={"ghost"}
+                      className="p-0 absolute right-0 top-0"
+                      onClick={() => setValues({...values, image: null})}>
+                      <X />
+                    </Button> */}
+                    <Image
+                      src={values?.image?.url}
+                      height={1000}
+                      width={1000}
+                      alt="gmghm"
+                      className="max-h-44 w-auto"
+                    />
+                  </div>
                 )}
                 <DialogFooter className="flex justify-between items-center gap-2 mt-4">
                   <DialogClose className="w-full">
@@ -223,4 +226,6 @@ export function FormModal({setIsLoading}: any) {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default UpadateModal;

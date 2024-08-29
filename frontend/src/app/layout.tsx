@@ -3,7 +3,7 @@ import {Sen} from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
 import {ThemeProvider} from "@/components/theme-provider";
-
+import {Toaster} from "@/components/ui/toaster";
 import {Bricolage_Grotesque} from "next/font/google";
 import {Space_Mono} from "next/font/google";
 
@@ -36,18 +36,19 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background antialiased flex justify-center items-center",
-          
+          "min-h-screen  antialiased flex justify-center items-center",
+
           fontHeading.variable,
           fontBody.variable
         )}>
         <StoreProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange>
             {children}
+            <Toaster />
           </ThemeProvider>
         </StoreProvider>
       </body>
