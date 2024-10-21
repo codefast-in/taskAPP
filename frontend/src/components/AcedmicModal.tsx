@@ -85,7 +85,7 @@ export function AcedmicModal({setIsLoading, id}: any) {
           <DialogHeader>
             <DialogTitle>Add New Educational Details</DialogTitle>
             <DialogDescription>
-              Fill data of new educational details. Click save when you're done.
+              Fill data of new educational details. Click save when you&rsquo;re done.
             </DialogDescription>
           </DialogHeader>
           <Formik
