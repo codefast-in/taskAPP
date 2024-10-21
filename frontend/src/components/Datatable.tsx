@@ -47,6 +47,15 @@ import Link from "next/link";
 import {useDispatch} from "react-redux";
 import {asDeleteData} from "@/reduxconfig/actions/userActions";
 import UpadateModal from "./UpadateModal";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Delete,
+  Eye,
+  Share,
+  Trash2,
+} from "lucide-react";
 
 export type User = {
   _id: string;
@@ -161,31 +170,60 @@ export function DataTableDemo() {
       cell: ({row}) => {
         const User = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <DotsHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(User._id)}>
-                Copy User ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href={`/home/${User._id}`}>View User</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <UpadateModal setIsLoading={setIsLoading} user={User} />
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => deleteUser(User._id)}>
-                Delete User
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            {/* <Button
+              size={"icon"}
+              variant={"link"}
+              onClick={() => navigator.clipboard.writeText(User._id)}>
+              <Copy />
+            </Button> */}
+            {/* <Button size={"icon"} variant={"link"} asChild>
+              <Link href={`/home/${User._id}`}>
+                <ChevronRight />
+              </Link>
+            </Button>
+            <UpadateModal setIsLoading={setIsLoading} user={User} />
+            <Button
+              size={"icon"}
+              variant={"link"}
+              onClick={() => deleteUser(User._id)}>
+              <Trash2 />
+            </Button> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <DotsHorizontalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {/* <DropdownMenuItem
+                  onClick={() => navigator.clipboard.writeText(User._id)}>
+                  Copy User ID
+                </DropdownMenuItem> */}
+                <DropdownMenuSeparator />
+                <div className="flex">
+                  <DropdownMenuItem>
+                    <Link href={`/home/${User._id}`}>
+                      <Eye className="text-primary" />
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <UpadateModal setIsLoading={setIsLoading} user={User}  />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      size={"icon"}
+                      variant={"link"}
+                      onClick={() => deleteUser(User._id)}>
+                      <Trash2 className="text-primary" />
+                    </Button>
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       },
     },
@@ -332,10 +370,10 @@ export function DataTableDemo() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        {/* <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        </div> */}
         <div className="space-x-2">
           <Button
             variant="outline"

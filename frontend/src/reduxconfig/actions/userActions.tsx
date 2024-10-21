@@ -118,3 +118,118 @@ export const asDeleteData: any =
       return false;
     }
   };
+
+export const asAddEducationalData: any =
+  (id: any, eduData: any, toast: any) => async (dispatch: Dispatch) => {
+    try {
+      const {data} = await app.post(`/upload-acedmic/${id}`, eduData);
+      toast({
+        title: data.message,
+      });
+      // console.log(data)
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+  export const asUpdateEducationalData: any =
+  (id: any, eduData: any, toast: any) => async (dispatch: Dispatch) => {
+    try {
+      const {data} = await app.post(`/update-acedmic/${id}`, eduData);
+      toast({
+        title: data.message,
+      });
+      // console.log(data)
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+  export const asDeleteEducationalData: any =
+  (id: any,  toast: any) => async (dispatch: Dispatch) => {
+    try {
+      const {data} = await app.post(`/delete-acedmic/`,id);
+      toast({
+        title: data.message,
+      });
+      // console.log(data)
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+export const asUploadDoc: any =
+  (id: string, values: any, toast: any) => async (dispatch: Dispatch) => {
+    const formData = new FormData();
+
+    formData.append("title", values.title);
+    formData.append("document", values?.document[0]);
+
+    try {
+      console.log(id)
+      const {data} = await app.post(`/upload-doc/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      toast({
+        title: data.message,
+        duration:2000
+      });
+      console.log(data);
+      return true;
+    } catch (error: any) {
+      toast({
+        title: error.response.data.message,
+        variant: "destructive",
+      });
+      console.log(error);
+      return false;
+    }
+  };
+
+  export const asUpdateDoc: any =
+  (id: string, values: any, toast: any) => async (dispatch: Dispatch) => {
+    const formData = new FormData();
+
+    formData.append("title", values.title);
+    formData.append("document", values?.document[0]);
+
+    try {      
+      const {data} = await app.post(`/update-doc/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      toast({
+        title: data.message,
+        duration:2000
+      });
+      console.log(data);
+      return true;
+    } catch (error: any) {
+      toast({
+        title: error.response.data.message,
+        variant: "destructive",
+      });
+      console.log(error);
+      return false;
+    }
+  };
+  export const asDeleteDoc: any =
+  (id: string, toast: any) => async (dispatch: Dispatch) => {
+    try {
+      const {data} = await app.post(`/delete-doc/`,id);
+      toast({
+        title: data.message,
+      });
+      // console.log(data)
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
